@@ -1,6 +1,6 @@
 module Main (main) where
 
-import Day4 (part1, part2)
+import Day6 (part1, part2)
 import System.Environment (getArgs)
 
 main :: IO ()
