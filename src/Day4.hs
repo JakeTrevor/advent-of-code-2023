@@ -10,32 +10,20 @@ import Text.Parsec (Parsec, char, digit, many1, optional, parse, spaces, string)
 data ScratchCard = MkCard {cardNumber :: Int, winningNumbers :: [Int], presentNumbers :: [Int]}
 
 cardName :: Parsec String () Int
-cardName =
-  do
-    _ <- string "Card"
-    spaces
-    d <- many1 digit
-    _ <- char ':'
-    spaces
-    return $ read d
+cardName = read <$> (string "Card" *> spaces *> many1 digit <* char ':' <* spaces)
 
 number :: Parsec String () Int
-number = do
-  d <- many1 digit
-  spaces
-  return $ read d
+number = read <$> many1 digit
 
 card :: Parsec String () ScratchCard
 card = do
   n <- cardName
-  winners <- many1 number
-  _ <- char '|'
-  spaces
+  winners <- many1 number <* char '|' <* spaces
   present <- many1 number
   return $ MkCard n winners present
 
 cards :: Parsec String () [ScratchCard]
-cards = many1 (card <* optional (char '\n'))
+cards = many1 (card <* spaces)
 -- ^ ^ equiv?:
 
 -- $ do
@@ -94,3 +82,6 @@ part2 t = do
   let initialCount = replicate (length allCards) 1
   let finalCount = updateCount initialCount allCards
   print $ sum finalCount
+
+myFunction :: [a] -> a
+myFunction (x : xs) = x + myFunction xs
